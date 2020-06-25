@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'SoundAlpha.ui'
 #
-# Created by: PyQt5 UI code generator 5.13.0
+# Created by: PyQt5 UI code generator 5.12.3
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -14,12 +14,15 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.setWindowModality(QtCore.Qt.ApplicationModal)
-        MainWindow.resize(241, 172)
+        MainWindow.resize(241, 176)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(MainWindow.sizePolicy().hasHeightForWidth())
         MainWindow.setSizePolicy(sizePolicy)
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap("./iPS.ico"), QtGui.QIcon.Normal, QtGui.QIcon.On)
+        MainWindow.setWindowIcon(icon)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Maximum, QtWidgets.QSizePolicy.Maximum)
         sizePolicy.setHorizontalStretch(0)
@@ -30,7 +33,7 @@ class Ui_MainWindow(object):
         self.centralwidget.setMaximumSize(QtCore.QSize(241, 172))
         self.centralwidget.setObjectName("centralwidget")
         self.pushButton_1 = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton_1.setGeometry(QtCore.QRect(10, 50, 221, 23))
+        self.pushButton_1.setGeometry(QtCore.QRect(10, 40, 221, 23))
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -38,17 +41,19 @@ class Ui_MainWindow(object):
         self.pushButton_1.setSizePolicy(sizePolicy)
         self.pushButton_1.setObjectName("pushButton_1")
         self.pushButton_2 = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton_2.setGeometry(QtCore.QRect(10, 90, 221, 23))
+        self.pushButton_2.setGeometry(QtCore.QRect(10, 70, 221, 23))
         self.pushButton_2.setObjectName("pushButton_2")
         self.pushButton_3 = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton_3.setGeometry(QtCore.QRect(10, 140, 221, 23))
         self.pushButton_3.setObjectName("pushButton_3")
         self.comboBox = QtWidgets.QComboBox(self.centralwidget)
         self.comboBox.setGeometry(QtCore.QRect(10, 10, 221, 22))
-        #self.comboBox.setCurrentText("alphavillesounds_like_a_melody.mp3")
-        #self.comboBox.addItem("alphavillesounds_like_a_melody.mp3")
-        #self.comboBox.addItem("Vechnye_Hity-Alphaville_-_Sounds_Like_A_Melody.mp3")
+        self.comboBox.setCurrentText("")
         self.comboBox.setObjectName("comboBox")
+        self.horizontalSlider = QtWidgets.QSlider(self.centralwidget)
+        self.horizontalSlider.setGeometry(QtCore.QRect(10, 110, 221, 22))
+        self.horizontalSlider.setOrientation(QtCore.Qt.Horizontal)
+        self.horizontalSlider.setObjectName("horizontalSlider")
         MainWindow.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(MainWindow)
