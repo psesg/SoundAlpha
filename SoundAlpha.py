@@ -25,18 +25,21 @@ class mywindow(QtWidgets.QMainWindow):
         self.ui.horizontalSlider.setMaximum(100)
         self.ui.horizontalSlider.setMinimum(0)
         self.ui.horizontalSlider.setSingleStep(10)
-        self.ui.horizontalSlider.setValue(80)
+        self.ui.horizontalSlider.setValue(100)
         self.ui.horizontalSlider.valueChanged.connect(self.SliderChanged)
         self.stoped=True
+        self.ui.comboBox.currentTextChanged.connect(self.comboBoxTextChanged)
         pygame.init()
-
-
 
     def btnClicked1(self):
         pygame.mixer.music.load(self.ui.comboBox.currentText())
         pygame.mixer.music.play(-1)
         self.stoped = False
         self.ui.pushButton_2.setEnabled(True)
+        self.ui.pushButton_2.setText("Пауза")
+        pygame.mixer.music.unpause()
+        self.stoped = False
+        self.ui.pushButton_1.setEnabled(False)
 
     def btnClicked2(self):
         if not self.stoped:
@@ -53,7 +56,14 @@ class mywindow(QtWidgets.QMainWindow):
             pygame.mixer.music.set_volume(value/100)
             #print(value)
 
-
+    def comboBoxTextChanged(self,choose_str):
+        if self.stoped == False:
+            pygame.mixer.music.stop()
+            self.stoped = True
+        self.ui.pushButton_2.setText("Пауза")
+        self.ui.pushButton_2.setEnabled(False)
+        self.ui.pushButton_1.setEnabled(True)
+        #print(choose_str)
 
     def btnClicked3(self):
         app.instance().quit()
