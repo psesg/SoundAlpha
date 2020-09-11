@@ -19,11 +19,15 @@ class mywindow(QtWidgets.QMainWindow):
             if file.endswith(".mp3"):
                 self.ui.comboBox.addItem(file)
                 #print(file)
+        if self.ui.comboBox.count() > 0:
+            self.ui.pushButton_1.setEnabled(True)
+        else:
+            self.ui.pushButton_1.setEnabled(False)
         self.ui.comboBox.setCurrentText(file)
         self.ui.horizontalSlider.setMaximum(100)
         self.ui.horizontalSlider.setMinimum(0)
         self.ui.horizontalSlider.setSingleStep(10)
-        self.ui.horizontalSlider.setValue(100)
+        self.ui.horizontalSlider.setValue(50)
         self.ui.horizontalSlider.valueChanged.connect(self.SliderChanged)
         self.stoped=True
         self.ui.comboBox.currentTextChanged.connect(self.comboBoxTextChanged)
