@@ -2,6 +2,11 @@ import os
 os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'
 import pygame
 from PyQt5 import QtWidgets
+from PyQt5.QtWidgets import QApplication
+from PyQt5.QtCore import Qt
+# next line for UHD display scaling
+QApplication.setAttribute(Qt.AA_EnableHighDpiScaling, True)
+
 import sys
 from SoundForm import Ui_MainWindow
 
@@ -27,7 +32,7 @@ class mywindow(QtWidgets.QMainWindow):
         self.ui.horizontalSlider.setMaximum(100)
         self.ui.horizontalSlider.setMinimum(0)
         self.ui.horizontalSlider.setSingleStep(10)
-        self.ui.horizontalSlider.setValue(50)
+        self.ui.horizontalSlider.setValue(85)
         self.ui.horizontalSlider.valueChanged.connect(self.SliderChanged)
         self.stoped=True
         self.ui.comboBox.currentTextChanged.connect(self.comboBoxTextChanged)
