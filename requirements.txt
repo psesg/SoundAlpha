@@ -1,2 +1,4 @@
-pyqt5==5.12.3
-pygame==2.1.0
+
+mutagen>=1.45.1
+PyQt5>=5.12.3
+pygame>=2.1.0

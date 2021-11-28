@@ -3,7 +3,8 @@ os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'
 import pygame
 from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QApplication
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt,QTimer
+from mutagen.mp3 import MP3
 # next line for UHD display scaling
 QApplication.setAttribute(Qt.AA_EnableHighDpiScaling, True)
 
@@ -36,27 +37,51 @@ class mywindow(QtWidgets.QMainWindow):
         self.ui.horizontalSlider.valueChanged.connect(self.SliderChanged)
         self.stoped=True
         self.ui.comboBox.currentTextChanged.connect(self.comboBoxTextChanged)
+        self.timer = QTimer()
+        self.timer.timeout.connect(self.showTime)
+        self.song = None
+        self.songLength = 0.0
         pygame.init()
+
+    def showTime(self):
+        if self.stoped == False:
+            #print (pygame.mixer.music.get_pos())
+            #print("songLength = {}".format(self.song.info.length))
+            curpos = pygame.mixer.music.get_pos()
+            if curpos/1000.0 >= self.songLength:
+                self.stopTimer()
+            print("song percent = {:.2f}".format((curpos/10.0)/self.songLength))
+
+    def startTimer(self):
+        self.timer.start(1000)
+
+    def stopTimer(self):
+        self.timer.stop()
 
     def btnClicked1(self):
         pygame.mixer.music.load(self.ui.comboBox.currentText())
-        pygame.mixer.music.play(-1)
+        pygame.mixer.music.play(loops=0) # -1
         self.stoped = False
         self.ui.pushButton_2.setEnabled(True)
         self.ui.pushButton_2.setText("Пауза")
         pygame.mixer.music.unpause()
         self.stoped = False
+        self.startTimer()
         self.ui.pushButton_1.setEnabled(False)
+        self.song = MP3(self.ui.comboBox.currentText())
+        self.songLength = self.song.info.length
 
     def btnClicked2(self):
         if not self.stoped:
             self.ui.pushButton_2.setText("Продолжить")
             pygame.mixer.music.pause()
             self.stoped = True
+            self.stopTimer()
         else:
             self.ui.pushButton_2.setText("Пауза")
             pygame.mixer.music.unpause()
             self.stoped = False
+            self.startTimer()
 
     def SliderChanged(self,value):
         if not self.stoped:
