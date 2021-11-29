@@ -58,7 +58,7 @@ class mywindow(QtWidgets.QMainWindow):
             #print("songLength = {}".format(self.song.info.length))
             curpos = pygame.mixer.music.get_pos()
             lensong = self.songLength
-            if (curpos/10.0)/lensong >= 99:
+            if (curpos/10.0)/lensong >= 98.0:
                 pygame.mixer.music.stop()
                 #pygame.mixer.music.set_pos(0.0)
                 self.stopTimer()
@@ -67,12 +67,12 @@ class mywindow(QtWidgets.QMainWindow):
                 self.ui.label_pos.setText("позиция: {:.2f}% из {:.2f} сек".format(0.0, lensong))
                 self.ui.comboBox.setEnabled(True)
             else:
-                #print("song percent = {:.2f}".format((curpos/10.0)/lensong))
+                print("song percent = {:.2f}".format((curpos/10.0)/lensong))
                 self.ui.horizontalSliderPos.setValue(int((curpos/10.0)/lensong))
                 self.ui.label_pos.setText("позиция: {:.2f}% из {:.2f} сек".format((curpos/10.0)/lensong, lensong))
 
     def startTimer(self):
-        self.timer.start(250)
+        self.timer.start(200)
 
     def stopTimer(self):
         self.timer.stop()
