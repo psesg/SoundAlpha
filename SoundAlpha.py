@@ -8,6 +8,8 @@ from mutagen.mp3 import MP3
 # next line for UHD display scaling
 QApplication.setAttribute(Qt.AA_EnableHighDpiScaling, True)
 
+# pyuic5 SoundForm.ui -o SoundForm.py
+
 import sys
 from SoundForm import Ui_MainWindow
 
@@ -27,6 +29,9 @@ class mywindow(QtWidgets.QMainWindow):
                 #print(file)
         if self.ui.comboBox.count() > 0:
             self.ui.pushButton_1.setEnabled(True)
+            self.song = MP3(self.ui.comboBox.currentText())
+            self.songLength = self.song.info.length
+            self.ui.label_pos.setText("позиция: {:.2f}% из {:.2f} сек".format(0.0, self.songLength))
         else:
             self.ui.pushButton_1.setEnabled(False)
         self.ui.comboBox.setCurrentText(file)
@@ -38,22 +43,36 @@ class mywindow(QtWidgets.QMainWindow):
         self.stoped=True
         self.ui.comboBox.currentTextChanged.connect(self.comboBoxTextChanged)
         self.timer = QTimer()
-        self.timer.timeout.connect(self.showTime)
+        self.timer.timeout.connect(self.showTimer)
         self.song = None
         self.songLength = 0.0
+        self.ui.horizontalSliderPos.setMaximum(100)
+        self.ui.horizontalSliderPos.setMinimum(0)
+        self.ui.horizontalSliderPos.setSingleStep(1)
+        self.ui.horizontalSliderPos.setEnabled(False)
         pygame.init()
 
-    def showTime(self):
+    def showTimer(self):
         if self.stoped == False:
             #print (pygame.mixer.music.get_pos())
             #print("songLength = {}".format(self.song.info.length))
             curpos = pygame.mixer.music.get_pos()
-            if curpos/1000.0 >= self.songLength:
+            lensong = self.songLength
+            if (curpos/10.0)/lensong >= 99:
+                pygame.mixer.music.stop()
+                #pygame.mixer.music.set_pos(0.0)
                 self.stopTimer()
-            print("song percent = {:.2f}".format((curpos/10.0)/self.songLength))
+                self.ui.pushButton_1.setEnabled(True)
+                self.ui.horizontalSliderPos.setValue(0)
+                self.ui.label_pos.setText("позиция: {:.2f}% из {:.2f} сек".format(0.0, lensong))
+                self.ui.comboBox.setEnabled(True)
+            else:
+                #print("song percent = {:.2f}".format((curpos/10.0)/lensong))
+                self.ui.horizontalSliderPos.setValue(int((curpos/10.0)/lensong))
+                self.ui.label_pos.setText("позиция: {:.2f}% из {:.2f} сек".format((curpos/10.0)/lensong, lensong))
 
     def startTimer(self):
-        self.timer.start(1000)
+        self.timer.start(250)
 
     def stopTimer(self):
         self.timer.stop()
@@ -70,17 +89,20 @@ class mywindow(QtWidgets.QMainWindow):
         self.ui.pushButton_1.setEnabled(False)
         self.song = MP3(self.ui.comboBox.currentText())
         self.songLength = self.song.info.length
+        self.ui.comboBox.setEnabled(False)
 
     def btnClicked2(self):
         if not self.stoped:
             self.ui.pushButton_2.setText("Продолжить")
             pygame.mixer.music.pause()
             self.stoped = True
+            self.ui.comboBox.setEnabled(True)
             self.stopTimer()
         else:
             self.ui.pushButton_2.setText("Пауза")
             pygame.mixer.music.unpause()
             self.stoped = False
+            self.ui.comboBox.setEnabled(False)
             self.startTimer()
 
     def SliderChanged(self,value):
@@ -95,6 +117,10 @@ class mywindow(QtWidgets.QMainWindow):
         self.ui.pushButton_2.setText("Пауза")
         self.ui.pushButton_2.setEnabled(False)
         self.ui.pushButton_1.setEnabled(True)
+        self.ui.horizontalSliderPos.setValue(0)
+        self.song = MP3(self.ui.comboBox.currentText())
+        self.songLength = self.song.info.length
+        self.ui.label_pos.setText("позиция: {:.2f}% из {:.2f} сек".format(0.0, self.songLength))
         #print(choose_str)
 
     def btnClicked3(self):
