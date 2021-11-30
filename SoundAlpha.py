@@ -67,7 +67,7 @@ class mywindow(QtWidgets.QMainWindow):
                 self.ui.label_pos.setText("позиция: {:.2f}% из {:.2f} сек".format(0.0, lensong))
                 self.ui.comboBox.setEnabled(True)
             else:
-                print("song percent = {:.2f}".format((curpos/10.0)/lensong))
+                #print("song percent = {:.2f}".format((curpos/10.0)/lensong))
                 self.ui.horizontalSliderPos.setValue(int((curpos/10.0)/lensong))
                 self.ui.label_pos.setText("позиция: {:.2f}% из {:.2f} сек".format((curpos/10.0)/lensong, lensong))
 
