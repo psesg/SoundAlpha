@@ -66,10 +66,10 @@
     </property>
     <property name="font">
      <font>
-      <family>Ubuntu Mono</family>
-      <pointsize>12</pointsize>
-      <weight>75</weight>
-      <bold>true</bold>
+      <family>Calibri</family>
+      <pointsize>11</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
      </font>
     </property>
     <property name="text">
@@ -87,10 +87,10 @@
     </property>
     <property name="font">
      <font>
-      <family>Ubuntu Mono</family>
-      <pointsize>12</pointsize>
-      <weight>75</weight>
-      <bold>true</bold>
+      <family>Calibri</family>
+      <pointsize>11</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
      </font>
     </property>
     <property name="text">
@@ -108,10 +108,10 @@
     </property>
     <property name="font">
      <font>
-      <family>Ubuntu Mono</family>
-      <pointsize>12</pointsize>
-      <weight>75</weight>
-      <bold>true</bold>
+      <family>Calibri</family>
+      <pointsize>11</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
      </font>
     </property>
     <property name="text">
@@ -129,7 +129,8 @@
     </property>
     <property name="font">
      <font>
-      <family>Ubuntu Condensed</family>
+      <family>Bahnschrift Condensed</family>
+      <pointsize>10</pointsize>
      </font>
     </property>
     <property name="currentText">
