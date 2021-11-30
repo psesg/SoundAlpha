@@ -66,8 +66,8 @@
     </property>
     <property name="font">
      <font>
-      <family>Calibri</family>
-      <pointsize>11</pointsize>
+      <family>Arial</family>
+      <pointsize>12</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -87,8 +87,8 @@
     </property>
     <property name="font">
      <font>
-      <family>Calibri</family>
-      <pointsize>11</pointsize>
+      <family>Arial</family>
+      <pointsize>12</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -108,8 +108,8 @@
     </property>
     <property name="font">
      <font>
-      <family>Calibri</family>
-      <pointsize>11</pointsize>
+      <family>Arial</family>
+      <pointsize>12</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -129,7 +129,7 @@
     </property>
     <property name="font">
      <font>
-      <family>Bahnschrift Condensed</family>
+      <family>Gill Sans</family>
       <pointsize>10</pointsize>
      </font>
     </property>
@@ -174,7 +174,8 @@
     </property>
     <property name="font">
      <font>
-      <family>Ubuntu Mono</family>
+      <family>Courier</family>
+      <pointsize>10</pointsize>
      </font>
     </property>
     <property name="text">
@@ -195,7 +196,10 @@
     </property>
     <property name="font">
      <font>
-      <family>Ubuntu Mono</family>
+      <family>Courier</family>
+      <pointsize>10</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
      </font>
     </property>
     <property name="layoutDirection">
