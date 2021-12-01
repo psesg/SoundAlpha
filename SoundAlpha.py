@@ -53,6 +53,7 @@ class mywindow(QtWidgets.QMainWindow):
         self.ui.horizontalSliderPos.setEnabled(False)
         self.running = False
         pygame.init()
+        pygame.mixer.init()
 
     def showTimer(self):
         if self.stoped == False:
@@ -86,7 +87,6 @@ class mywindow(QtWidgets.QMainWindow):
         self.ui.pushButton_PauseCont.setEnabled(True)
         self.ui.pushButton_PauseCont.setText("пауза")
         pygame.mixer.music.unpause()
-        self.stoped = False
         self.startTimer()
         self.ui.pushButton_PlaySelected.setEnabled(False)
         self.song = MP3(self.ui.comboBox.currentText())
@@ -94,26 +94,17 @@ class mywindow(QtWidgets.QMainWindow):
         self.ui.comboBox.setEnabled(False)
 
     def PlayAll(self):
-        playlist = list()
-        for i in range(self.ui.comboBox.count()):
+        playArray = []
+        for i in range(0, self.ui.comboBox.count()):
             self.ui.comboBox.setCurrentIndex(i)
-            playlist.append(self.ui.comboBox.currentText())
-        playlist.reverse()
-        print(playlist)
-
-        pygame.mixer.music.load(playlist.pop())  # Get the first track from the playlist
-        pygame.mixer.music.queue(playlist.pop())  # Queue the 2nd song
-        pygame.mixer.music.set_endevent(pygame.USEREVENT)  # Setup the end track event
-        pygame.mixer.music.play()  # Play the music
-        self.running = True
-        while self.running:
-            for event in pygame.event.get():
-                if event.type == pygame.USEREVENT:  # A track has ended
-                    if len(playlist) > 0:  # If there are more tracks in the queue...
-                        pygame.mixer.music.queue(playlist.pop())  # Q
-                    else:
-                        self.running = False
-                        pygame.event.clear(eventtype=None, pump=True)
+            playArray.append(self.ui.comboBox.currentText())
+            print(i, self.ui.comboBox.currentText())
+            if i == 0:
+                pygame.mixer.music.load(self.ui.comboBox.currentText())
+            else:
+                pygame.mixer.music.queue(self.ui.comboBox.currentText())
+        #playArray.reverse()
+        pygame.mixer.music.play()
 
     def PauseCont(self):
         if not self.stoped:
@@ -148,10 +139,6 @@ class mywindow(QtWidgets.QMainWindow):
         #print(choose_str)
 
     def ExitPrg(self):
-        self.running = False
-        pygame.mixer.music.stop()
-        pygame.event.clear(eventtype=None, pump=True)
-
         app.instance().quit()
         pygame.quit()
 
