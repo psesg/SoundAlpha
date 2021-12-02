@@ -162,7 +162,6 @@ class mywindow(QtWidgets.QMainWindow):
             self.insert_into_playlist(file4play)
         self.start_playlist(self.playList)
 
-
     def PauseCont(self):
         if not self.stoped:
             self.ui.pushButton_PauseCont.setText("продолжить")
