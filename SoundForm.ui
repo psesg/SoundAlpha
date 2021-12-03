@@ -140,9 +140,9 @@
    <widget class="QSlider" name="horizontalSlider">
     <property name="geometry">
      <rect>
-      <x>20</x>
+      <x>10</x>
       <y>150</y>
-      <width>201</width>
+      <width>221</width>
       <height>22</height>
      </rect>
     </property>
@@ -153,9 +153,9 @@
    <widget class="QSlider" name="horizontalSliderPos">
     <property name="geometry">
      <rect>
-      <x>20</x>
+      <x>10</x>
       <y>190</y>
-      <width>201</width>
+      <width>221</width>
       <height>22</height>
      </rect>
     </property>
@@ -174,8 +174,8 @@
     </property>
     <property name="font">
      <font>
-      <family>Courier</family>
-      <pointsize>10</pointsize>
+      <family>Courier New</family>
+      <pointsize>9</pointsize>
      </font>
     </property>
     <property name="text">
@@ -196,8 +196,8 @@
     </property>
     <property name="font">
      <font>
-      <family>Courier</family>
-      <pointsize>10</pointsize>
+      <family>Courier New</family>
+      <pointsize>9</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>

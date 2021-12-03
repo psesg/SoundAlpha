@@ -57,6 +57,10 @@ class mywindow(QtWidgets.QMainWindow):
         self.running = False
         pygame.init()
         pygame.mixer.init()
+        # setting up an end event which host an event
+        # after the end of every song
+        self.SONG_END = pygame.USEREVENT + 1
+        pygame.mixer.music.set_endevent(self.SONG_END)
 
     def showTimer(self):
         if self.stoped == False:
@@ -104,8 +108,8 @@ class mywindow(QtWidgets.QMainWindow):
 
         # setting up an end event which host an event
         # after the end of every song
-        SONG_END = pygame.USEREVENT + 1
-        pygame.mixer.music.set_endevent(SONG_END)
+        #SONG_END = pygame.USEREVENT + 1
+        #pygame.mixer.music.set_endevent(SONG_END)
 
         # Playing the songs in the background
         self.running = True
@@ -117,7 +121,7 @@ class mywindow(QtWidgets.QMainWindow):
 
                 # A event will be hosted
                 # after the end of every song
-                if event.type == SONG_END:
+                if event.type == self.SONG_END:
                     print('Song Finished')
 
                     # Checking our playList
@@ -139,21 +143,51 @@ class mywindow(QtWidgets.QMainWindow):
                     # completed playing successfully
                     # we'll go out of the
                     # while-loop by using break
-                    running = False
+                    self.running = False
                     break
 
     def PlaySelected(self):
-        pygame.mixer.music.load(os.path.join(self.mus_path, self.ui.comboBox.currentText()))
-        pygame.mixer.music.play(loops=0) # -1
+
         self.stoped = False
         self.ui.pushButton_PauseCont.setEnabled(True)
         self.ui.pushButton_PauseCont.setText("пауза")
-        pygame.mixer.music.unpause()
         self.startTimer()
         self.ui.pushButton_PlaySelected.setEnabled(False)
         self.song = MP3(os.path.join(self.mus_path, self.ui.comboBox.currentText()))
         self.songLength = self.song.info.length
         self.ui.comboBox.setEnabled(False)
+        pygame.mixer.music.load(os.path.join(self.mus_path, self.ui.comboBox.currentText()))
+        pygame.mixer.music.play(loops=0)  # -1
+        pygame.mixer.music.unpause()
+        self.ui.pushButton_PlayAll.setEnabled(False)
+
+        # Playing the songs in the background
+        self.running = True
+        while self.running:
+
+            # checking if any event has been
+            # hosted at time of playing
+            for event in pygame.event.get():
+
+                # A event will be hosted
+                # after the end of every song
+                if event.type == self.SONG_END:
+                    print('Single Song Finished')
+
+                # Checking whether the
+                # player is still playing any song
+                # if yes it will return true and false otherwise
+                if not pygame.mixer.music.get_busy():
+                    print("Single Playlist completed")
+
+                    # When the playlist has
+                    # completed playing successfully
+                    # we'll go out of the
+                    # while-loop by using break
+                    self.running = False
+                    break
+        print("Exit Single while loop")
+        self.ui.pushButton_PlayAll.setEnabled(True)
 
     def PlayAll(self):
         for i in range(0,self.ui.comboBox.count()):
