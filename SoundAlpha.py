@@ -12,9 +12,8 @@ QApplication.setAttribute(Qt.AA_EnableHighDpiScaling, True)
 
 import sys
 from SoundForm import Ui_MainWindow
-#playList = []
+
 class mywindow(QtWidgets.QMainWindow):
-    #global playList
     def __init__(self):
         super(mywindow, self).__init__()
         self.ui = Ui_MainWindow()
@@ -90,40 +89,31 @@ class mywindow(QtWidgets.QMainWindow):
     def stopTimer(self):
         self.timer.stop()
 
-    def insert_into_playlist(self, music_file):
-        # Adding songs file in our playlist
-        self.playList.append(music_file)
-        print("PlayAll loop count list = ".format(len(self.playList)))
-
     def start_playlist(self,playList):
-        print("1 len list = ".format(len(self.playList)))
         # Loading first audio file into our player
-        pygame.mixer.music.load(playList[0])
-        print("playList[0] = {}".format(playList[0]))
-        self.song = MP3(playList[0])
+        pygame.mixer.music.load(self.playList[0])
+        self.song = MP3(self.playList[0])
         self.songLength = self.song.info.length
+        self.ui.label_cursong.setText(os.path.basename(self.playList[0]))
         self.startTimer()
         # Removing the loaded song from our playlist list
-        playList.pop(0)
+        self.playList.pop(0)
 
         # Playing our music
         pygame.mixer.music.play()
 
         # Queueing next song into our player
-        pygame.mixer.music.queue(playList[0])
-        playList.pop(0)
+        #pygame.mixer.music.queue(self.playList[0])
+        #self.playList.pop(0)
 
         # setting up an end event which host an event
         # after the end of every song
         #SONG_END = pygame.USEREVENT + 1
-        #pygame.mixer.music.set_endevent(SONG_END)
-
-        print("before loop len list = ".format(len(self.playList)))
+        pygame.mixer.music.set_endevent(self.SONG_END)
 
         # Playing the songs in the background
         self.running = True
         while self.running:
-
             # checking if any event has been
             # hosted at time of playing
             for event in pygame.event.get():
@@ -132,21 +122,35 @@ class mywindow(QtWidgets.QMainWindow):
                 # after the end of every song
                 if event.type == self.SONG_END:
                     print('Song Finished')
+                    self.stopTimer()
 
                     # Checking our playList
                     # that if any song exist or
                     # it is empty
-                    if len(playList) > 0:
+                    if len(self.playList) > 0:
                         # if song available then load it in player
                         # and remove from the player
-                        pygame.mixer.music.queue(playList[0])
-                        playList.pop(0)
+                        #pygame.mixer.music.queue(self.playList[0])
+                        pygame.mixer.music.load(self.playList[0])
+                        self.song = MP3(self.playList[0])
+                        self.songLength = self.song.info.length
+                        self.ui.label_cursong.setText(os.path.basename(self.playList[0]))
+                        pygame.mixer.music.play()
+                        self.startTimer()
+                        self.playList.pop(0)
 
                 # Checking whether the
                 # player is still playing any song
                 # if yes it will return true and false otherwise
                 if not pygame.mixer.music.get_busy():
                     print("Playlist completed")
+                    self.ui.pushButton_PlayAll.setEnabled(True)
+                    self.ui.pushButton_Stop.setEnabled(False)
+                    self.ui.pushButton_Exit.setEnabled(True)
+                    self.ui.pushButton_PauseCont.setEnabled(False)
+                    self.ui.label_cursong.setText("")
+                    self.stoped = True
+                    self.stopTimer()
 
                     # When the playlist has
                     # completed playing successfully
@@ -156,7 +160,6 @@ class mywindow(QtWidgets.QMainWindow):
                     break
 
     def PlaySelected(self):
-
         self.stoped = False
         self.ui.pushButton_PauseCont.setEnabled(True)
         self.ui.pushButton_PauseCont.setText("пауза")
@@ -166,6 +169,7 @@ class mywindow(QtWidgets.QMainWindow):
         self.songLength = self.song.info.length
         self.ui.comboBox.setEnabled(False)
         pygame.mixer.music.load(os.path.join(self.mus_path, self.ui.comboBox.currentText()))
+        self.ui.label_cursong.setText(self.ui.comboBox.currentText())
         pygame.mixer.music.play(loops=0)  # -1
         pygame.mixer.music.unpause()
         self.ui.pushButton_PlayAll.setEnabled(False)
@@ -202,6 +206,7 @@ class mywindow(QtWidgets.QMainWindow):
         self.ui.pushButton_Stop.setEnabled(False)
         self.ui.pushButton_Exit.setEnabled(True)
         self.ui.pushButton_PauseCont.setEnabled(False)
+        self.ui.label_cursong.setText("")
         self.stoped = True
         self.stopTimer()
 
@@ -209,8 +214,7 @@ class mywindow(QtWidgets.QMainWindow):
         for i in range(0,self.ui.comboBox.count()):
             file4play = os.path.join(self.mus_path, self.ui.comboBox.itemText(i))
             print(i, file4play)
-            self.insert_into_playlist(file4play)
-
+            self.playList.append(file4play)
         self.ui.pushButton_Stop.setEnabled(True)
         self.ui.pushButton_PlaySelected.setEnabled(False)
         self.ui.pushButton_PlayAll.setEnabled(False)
@@ -258,6 +262,8 @@ class mywindow(QtWidgets.QMainWindow):
         self.ui.pushButton_PlayAll.setEnabled(True)
         self.ui.pushButton_PauseCont.setEnabled(False)
         self.ui.pushButton_Exit.setEnabled(True)
+        if len(self.playList) > 0:
+            self.playList.clear()
         pygame.mixer.music.stop()
 
     def ExitPrg(self):
