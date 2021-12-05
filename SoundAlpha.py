@@ -262,6 +262,10 @@ class mywindow(QtWidgets.QMainWindow):
         self.ui.pushButton_PlayAll.setEnabled(True)
         self.ui.pushButton_PauseCont.setEnabled(False)
         self.ui.pushButton_Exit.setEnabled(True)
+        self.ui.horizontalSliderPos.setValue(0)
+        self.song = MP3(os.path.join(self.mus_path, self.ui.comboBox.currentText()))
+        self.songLength = self.song.info.length
+        self.ui.label_pos.setText("позиция: {:.2f}% из {:.2f} сек".format(0.0, self.songLength))
         if len(self.playList) > 0:
             self.playList.clear()
         pygame.mixer.music.stop()
