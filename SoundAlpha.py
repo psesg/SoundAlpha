@@ -12,8 +12,9 @@ QApplication.setAttribute(Qt.AA_EnableHighDpiScaling, True)
 
 import sys
 from SoundForm import Ui_MainWindow
-
+#playList = []
 class mywindow(QtWidgets.QMainWindow):
+    #global playList
     def __init__(self):
         super(mywindow, self).__init__()
         self.ui = Ui_MainWindow()
@@ -92,12 +93,16 @@ class mywindow(QtWidgets.QMainWindow):
     def insert_into_playlist(self, music_file):
         # Adding songs file in our playlist
         self.playList.append(music_file)
+        print("PlayAll loop count list = ".format(len(self.playList)))
 
     def start_playlist(self,playList):
-
+        print("1 len list = ".format(len(self.playList)))
         # Loading first audio file into our player
         pygame.mixer.music.load(playList[0])
-
+        print("playList[0] = {}".format(playList[0]))
+        self.song = MP3(playList[0])
+        self.songLength = self.song.info.length
+        self.startTimer()
         # Removing the loaded song from our playlist list
         playList.pop(0)
 
@@ -112,6 +117,8 @@ class mywindow(QtWidgets.QMainWindow):
         # after the end of every song
         #SONG_END = pygame.USEREVENT + 1
         #pygame.mixer.music.set_endevent(SONG_END)
+
+        print("before loop len list = ".format(len(self.playList)))
 
         # Playing the songs in the background
         self.running = True
@@ -203,7 +210,14 @@ class mywindow(QtWidgets.QMainWindow):
             file4play = os.path.join(self.mus_path, self.ui.comboBox.itemText(i))
             print(i, file4play)
             self.insert_into_playlist(file4play)
-        self.ui.pushButton_Stop.setEnabled(False)
+
+        self.ui.pushButton_Stop.setEnabled(True)
+        self.ui.pushButton_PlaySelected.setEnabled(False)
+        self.ui.pushButton_PlayAll.setEnabled(False)
+        self.ui.pushButton_Exit.setEnabled(False)
+        self.ui.comboBox.setEnabled(False)
+        self.ui.pushButton_PauseCont.setEnabled(True)
+        self.stoped = False
         self.start_playlist(self.playList)
 
     def PauseCont(self):
