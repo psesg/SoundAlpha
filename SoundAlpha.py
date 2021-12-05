@@ -23,6 +23,7 @@ class mywindow(QtWidgets.QMainWindow):
         self.ui.pushButton_PlayAll.clicked.connect(self.PlayAll)
         self.ui.pushButton_PauseCont.clicked.connect(self.PauseCont)
         self.ui.pushButton_Exit.clicked.connect(self.ExitPrg)
+        self.ui.pushButton_Stop.clicked.connect(self.StopPrg)
         self.ui.pushButton_PauseCont.setEnabled(False)
         self.mus_path = os.path.join(os.getcwd(), "mus")
         for file in os.listdir(self.mus_path):
@@ -40,7 +41,7 @@ class mywindow(QtWidgets.QMainWindow):
         self.ui.horizontalSlider.setMaximum(100)
         self.ui.horizontalSlider.setMinimum(0)
         self.ui.horizontalSlider.setSingleStep(10)
-        self.ui.horizontalSlider.setValue(85)
+        self.ui.horizontalSlider.setValue(100)
         self.ui.horizontalSlider.valueChanged.connect(self.SliderChanged)
         self.stoped=True
         self.ui.comboBox.currentTextChanged.connect(self.comboBoxTextChanged)
@@ -61,6 +62,7 @@ class mywindow(QtWidgets.QMainWindow):
         # after the end of every song
         self.SONG_END = pygame.USEREVENT + 1
         pygame.mixer.music.set_endevent(self.SONG_END)
+        self.ui.pushButton_Stop.setEnabled(False)
 
     def showTimer(self):
         if self.stoped == False:
@@ -160,6 +162,8 @@ class mywindow(QtWidgets.QMainWindow):
         pygame.mixer.music.play(loops=0)  # -1
         pygame.mixer.music.unpause()
         self.ui.pushButton_PlayAll.setEnabled(False)
+        self.ui.pushButton_Stop.setEnabled(True)
+        self.ui.pushButton_Exit.setEnabled(False)
 
         # Playing the songs in the background
         self.running = True
@@ -188,12 +192,18 @@ class mywindow(QtWidgets.QMainWindow):
                     break
         print("Exit Single while loop")
         self.ui.pushButton_PlayAll.setEnabled(True)
+        self.ui.pushButton_Stop.setEnabled(False)
+        self.ui.pushButton_Exit.setEnabled(True)
+        self.ui.pushButton_PauseCont.setEnabled(False)
+        self.stoped = True
+        self.stopTimer()
 
     def PlayAll(self):
         for i in range(0,self.ui.comboBox.count()):
             file4play = os.path.join(self.mus_path, self.ui.comboBox.itemText(i))
             print(i, file4play)
             self.insert_into_playlist(file4play)
+        self.ui.pushButton_Stop.setEnabled(False)
         self.start_playlist(self.playList)
 
     def PauseCont(self):
@@ -201,13 +211,13 @@ class mywindow(QtWidgets.QMainWindow):
             self.ui.pushButton_PauseCont.setText("продолжить")
             pygame.mixer.music.pause()
             self.stoped = True
-            self.ui.comboBox.setEnabled(True)
+            #self.ui.comboBox.setEnabled(True)
             self.stopTimer()
         else:
             self.ui.pushButton_PauseCont.setText("пауза")
             pygame.mixer.music.unpause()
             self.stoped = False
-            self.ui.comboBox.setEnabled(False)
+            #self.ui.comboBox.setEnabled(False)
             self.startTimer()
 
     def SliderChanged(self,value):
@@ -227,6 +237,14 @@ class mywindow(QtWidgets.QMainWindow):
         self.songLength = self.song.info.length
         self.ui.label_pos.setText("позиция: {:.2f}% из {:.2f} сек".format(0.0, self.songLength))
         #print(choose_str)
+
+    def StopPrg(self):
+        self.ui.comboBox.setEnabled(True)
+        self.ui.pushButton_PlaySelected.setEnabled(True)
+        self.ui.pushButton_PlayAll.setEnabled(True)
+        self.ui.pushButton_PauseCont.setEnabled(False)
+        self.ui.pushButton_Exit.setEnabled(True)
+        pygame.mixer.music.stop()
 
     def ExitPrg(self):
         app.instance().quit()
