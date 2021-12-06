@@ -24,7 +24,7 @@
   </property>
   <property name="windowIcon">
    <iconset>
-    <normalon>../../anaconda3/Lib/site-packages/pygame/pygame.ico</normalon>
+    <normalon>pygame.ico</normalon>
    </iconset>
   </property>
   <widget class="QWidget" name="centralwidget">
