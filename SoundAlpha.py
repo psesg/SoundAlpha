@@ -11,7 +11,7 @@ from pathlib import Path
 QApplication.setAttribute(Qt.AA_EnableHighDpiScaling, True)
 
 # pyuic5 SoundForm.ui -o SoundForm.py
-# pyinstaller SoundAlpha.py -F -w --icon pygame.ico --version-file version.rc
+# pyinstaller SoundAlpha.py -F -w --icon pygame.ico --version-file version.txt
 
 import logging, sys
 logging.basicConfig(stream=sys.stderr, level=logging.CRITICAL) #DEBUG, CRITICAL
@@ -102,6 +102,7 @@ class mywindow(QtWidgets.QMainWindow):
                     logging.info("self.file = '{}'".format(self.file))
             if self.ui.comboBox.count() > 0:
                 self.ui.pushButton_PlaySelected.setEnabled(True)
+                self.ui.pushButton_PlayAll.setEnabled(True)
                 self.song = MP3(os.path.join(self.mus_path, self.ui.comboBox.currentText()))
                 self.songLength = self.song.info.length
                 self.ui.label_pos.setText("позиция: {:.2f}% из {:.2f} сек".format(0.0, self.songLength))
