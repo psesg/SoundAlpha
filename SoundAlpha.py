@@ -11,6 +11,7 @@ from pathlib import Path
 QApplication.setAttribute(Qt.AA_EnableHighDpiScaling, True)
 
 # pyuic5 SoundForm.ui -o SoundForm.py
+# pyinstaller SoundAlpha.py -F -w --icon pygame.ico --version-file version.rc
 
 import logging, sys
 logging.basicConfig(stream=sys.stderr, level=logging.CRITICAL) #DEBUG, CRITICAL
@@ -30,11 +31,13 @@ class mywindow(QtWidgets.QMainWindow):
         self.ui.pushButton_Stop.clicked.connect(self.StopPrg)
         self.ui.pushButton_PauseCont.setEnabled(False)
         self.mus_path = os.path.join(os.getcwd(), "mus")
+        self.file = ""
+        self.file4play = ""
         self.ui.plainTextEdit_start_dir.setPlainText(self.mus_path)
-        for file in os.listdir(self.mus_path):
-            if file.endswith(".mp3"):
-                self.ui.comboBox.addItem(file)
-                logging.info("file = '{}'".format(file))
+        for self.file in os.listdir(self.mus_path):
+            if self.file.endswith(".mp3"):
+                self.ui.comboBox.addItem(self.file)
+                logging.info("self.file = '{}'".format(self.file))
         if self.ui.comboBox.count() > 0:
             self.ui.pushButton_PlaySelected.setEnabled(True)
             self.song = MP3(os.path.join(self.mus_path, self.ui.comboBox.currentText()))
@@ -43,7 +46,7 @@ class mywindow(QtWidgets.QMainWindow):
         else:
             self.ui.pushButton_PlaySelected.setEnabled(False)
             self.ui.pushButton_PlayAll.setEnabled(False)
-        self.ui.comboBox.setCurrentText(file)
+        self.ui.comboBox.setCurrentText(self.file)
         self.ui.horizontalSlider.setMaximum(100)
         self.ui.horizontalSlider.setMinimum(0)
         self.ui.horizontalSlider.setSingleStep(10)
@@ -93,10 +96,10 @@ class mywindow(QtWidgets.QMainWindow):
             if self.ui.comboBox.count() > 0:
                 self.ui.comboBox.clear()
                 logging.info("executed self.ui.comboBox.clear()")
-            for file in os.listdir(self.mus_path):
-                if file.endswith(".mp3"):
-                    self.ui.comboBox.addItem(file)
-                    logging.info("file = '{}'".format(file))
+            for self.file in os.listdir(self.mus_path):
+                if self.file.endswith(".mp3"):
+                    self.ui.comboBox.addItem(self.file)
+                    logging.info("self.file = '{}'".format(self.file))
             if self.ui.comboBox.count() > 0:
                 self.ui.pushButton_PlaySelected.setEnabled(True)
                 self.song = MP3(os.path.join(self.mus_path, self.ui.comboBox.currentText()))
@@ -254,9 +257,9 @@ class mywindow(QtWidgets.QMainWindow):
 
     def PlayAll(self):
         for i in range(0,self.ui.comboBox.count()):
-            file4play = os.path.join(self.mus_path, self.ui.comboBox.itemText(i))
-            logging.info("i = {},  file4play = '{}'".format(i, file4play))
-            self.playList.append(file4play)
+            self.file4play = os.path.join(self.mus_path, self.ui.comboBox.itemText(i))
+            logging.info("i = {},  self.file4play = '{}'".format(i, self.file4play))
+            self.playList.append(self.file4play)
         self.ui.pushButton_Stop.setEnabled(True)
         self.ui.pushButton_PlaySelected.setEnabled(False)
         self.ui.pushButton_PlayAll.setEnabled(False)
