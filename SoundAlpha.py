@@ -11,7 +11,7 @@ from pathlib import Path
 QApplication.setAttribute(Qt.AA_EnableHighDpiScaling, True)
 
 # pyuic5 SoundForm.ui -o SoundForm.py
-# pyinstaller SoundAlpha.py -F -w --icon pygame.ico --version-file version.txt
+# for Win:  pyinstaller SoundAlpha.py -F -w --icon pygame.ico --version-file file_version_info.txt
 
 import logging, sys
 logging.basicConfig(stream=sys.stderr, level=logging.CRITICAL) #DEBUG, CRITICAL
