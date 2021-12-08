@@ -149,6 +149,7 @@ class mywindow(QtWidgets.QMainWindow):
         # Playing the songs in the background
         self.running = True
         while self.running:
+            QApplication.processEvents()
             # checking if any event has been
             # hosted at time of playing
             for event in pygame.event.get():
@@ -220,7 +221,7 @@ class mywindow(QtWidgets.QMainWindow):
         # Playing the songs in the background
         self.running = True
         while self.running:
-
+            QApplication.processEvents()
             # checking if any event has been
             # hosted at time of playing
             for event in pygame.event.get():
