@@ -82,7 +82,7 @@ class mywindow(QtWidgets.QMainWindow):
     def btn_Choose(self):
         dlg = QFileDialog()
         dlg.setFileMode(QFileDialog.DirectoryOnly)
-        dlg.setDirectory(str(Path.home()))
+        dlg.setDirectory(self.mus_path)
         dlg.setModal(True)
         if dlg.exec_():
             self.dirname = dlg.selectedFiles()[0]
