@@ -61,7 +61,10 @@ class MyWindow(QtWidgets.QMainWindow):
         self.ui.horizontalSlider.valueChanged.connect(self.slider_changed)
         self.is_not_playing = True
         self.ui.comboBox.currentTextChanged.connect(self.combobox_text_changed)
-        self.timer = None
+        # self.timer = None
+        # self.timer_id = None
+        self.timer = QTimer(self) # QTimer()
+        self.timer.timeout.connect(self.showtimer)
         self.song = None
         self.songLength = 0.0
         self.ui.horizontalSliderPos.setMaximum(100)
@@ -83,15 +86,16 @@ class MyWindow(QtWidgets.QMainWindow):
         self.dirname = ""
 
     def new_timer(self):
-        self.timer = QTimer()
+        # self.timer = QTimer(self) # QTimer()
+        #self.connect(self.timer, QtCore.SIGNAL('timeout()'), self.showtimer())
+        # self.timer.timeout.connect(self.showtimer)
         self.timer.start(TIMER_MSEC)
-        self.timer.timeout.connect(self.showtimer)
 
     def del_timer(self):
         # self.timer = QTimer()
         self.timer.stop()
-        self.timer.timeout.connect(self.showtimer)
-        self.timer.killTimer(self.timer.timerId())
+        #self.timer.timeout.connect(self.showtimer)
+        #self.timer.killTimer(self.timer_id)
 
     def btn_choose_dir(self):
         QApplication.processEvents()
@@ -298,6 +302,11 @@ class MyWindow(QtWidgets.QMainWindow):
 
     def pause_continue(self):
         QApplication.processEvents()
+        if self.timer.isActive():
+            logging.info("before self.timer.isActive() = True")
+        else:
+            logging.info("before self.timer.isActive() = False")
+
         if not self.is_not_playing:
             self.del_timer()
             # self.timer.stop()
@@ -310,6 +319,10 @@ class MyWindow(QtWidgets.QMainWindow):
             self.new_timer()
             # self.timer.start(TIMER_MSEC)
             pygame.mixer.music.unpause()
+        if self.timer.isActive():
+            logging.info("after self.timer.isActive() = True")
+        else:
+            logging.info("after self.timer.isActive() = False")
 
     def slider_changed(self, value):
         QApplication.processEvents()
