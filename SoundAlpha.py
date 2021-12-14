@@ -59,7 +59,7 @@ class MyWindow(QtWidgets.QMainWindow):
         self.ui.horizontalSlider.setSingleStep(10)
         self.ui.horizontalSlider.setValue(100)
         self.ui.horizontalSlider.valueChanged.connect(self.slider_changed)
-        self.is_not_playing = True
+        self.is_playing = False
         self.ui.comboBox.currentTextChanged.connect(self.combobox_text_changed)
         # self.timer = None
         # self.timer_id = None
@@ -136,14 +136,14 @@ class MyWindow(QtWidgets.QMainWindow):
 
     def showtimer(self):
         QApplication.processEvents()
-        if not self.is_not_playing:
+        if  self.is_playing:
             curpos = pygame.mixer.music.get_pos()
             lensong = self.songLength
             if (curpos/10.0)/lensong >= 98.0:
                 pygame.mixer.music.stop()
                 self.del_timer()
                 # self.timer.stop()
-                self.ui.pushButton_PlaySelected.setEnabled(True)
+                #self.ui.pushButton_PlaySelected.setEnabled(True)
                 self.ui.horizontalSliderPos.setValue(0)
                 self.ui.label_pos.setText("позиция: {:.2f}% из {:.2f} сек".format(0.0, lensong))
                 self.ui.comboBox.setEnabled(True)
@@ -204,11 +204,12 @@ class MyWindow(QtWidgets.QMainWindow):
                 if not pygame.mixer.music.get_busy():
                     logging.info("Playlist completed")
                     self.ui.pushButton_PlayAll.setEnabled(True)
+                    self.ui.pushButton_PlaySelected.setEnabled(True)
                     self.ui.pushButton_Stop.setEnabled(False)
                     self.ui.pushButton_Exit.setEnabled(True)
                     self.ui.pushButton_PauseCont.setEnabled(False)
                     self.ui.label_cursong.setText("")
-                    self.is_not_playing = True
+                    self.is_playing = False
                     self.del_timer()
                     # self.timer.stop()
                     self.ui.pushButton_Choose.setEnabled(True)
@@ -223,10 +224,11 @@ class MyWindow(QtWidgets.QMainWindow):
                     # while-loop by using break
                     self.running = False
                     break
+        logging.info("Exit list while loop")
 
     def play_selected(self):
         QApplication.processEvents()
-        self.is_not_playing = False
+        self.is_playing = True
         self.ui.pushButton_PauseCont.setEnabled(True)
         self.ui.pushButton_PauseCont.setText("пауза")
         self.new_timer()
@@ -278,7 +280,7 @@ class MyWindow(QtWidgets.QMainWindow):
         self.ui.pushButton_PauseCont.setEnabled(False)
         self.ui.pushButton_Choose.setEnabled(True)
         self.ui.label_cursong.setText("")
-        self.is_not_playing = True
+        self.is_playing = False
         self.del_timer()
         # self.timer.stop()
         self.ui.horizontalSliderPos.setValue(0)
@@ -296,7 +298,7 @@ class MyWindow(QtWidgets.QMainWindow):
         self.ui.pushButton_Exit.setEnabled(False)
         self.ui.comboBox.setEnabled(False)
         self.ui.pushButton_PauseCont.setEnabled(True)
-        self.is_not_playing = False
+        self.is_playing = True
         self.ui.pushButton_Choose.setEnabled(False)
         self.start_playlist()
 
@@ -307,15 +309,15 @@ class MyWindow(QtWidgets.QMainWindow):
         else:
             logging.info("before self.timer.isActive() = False")
 
-        if not self.is_not_playing:
+        if  self.is_playing:
             self.del_timer()
             # self.timer.stop()
             self.ui.pushButton_PauseCont.setText("продолжить")
-            self.is_not_playing = True
+            self.is_playing = False
             pygame.mixer.music.pause()
         else:
             self.ui.pushButton_PauseCont.setText("пауза")
-            self.is_not_playing = False
+            self.is_playing = True
             self.new_timer()
             # self.timer.start(TIMER_MSEC)
             pygame.mixer.music.unpause()
@@ -326,16 +328,16 @@ class MyWindow(QtWidgets.QMainWindow):
 
     def slider_changed(self, value):
         QApplication.processEvents()
-        if not self.is_not_playing:
+        if self.is_playing:
             pygame.mixer.music.set_volume(value/100)
             logging.info("value = {}".format(value))
 
     def combobox_text_changed(self, choose_str):
         QApplication.processEvents()
         logging.info("choose_str = {}".format(choose_str))
-        if not self.is_not_playing:
+        if self.is_playing:
             pygame.mixer.music.stop()
-            self.is_not_playing = True
+            self.is_playing = False
         self.ui.pushButton_PauseCont.setText("пауза")
         self.ui.pushButton_PauseCont.setEnabled(False)
         self.ui.pushButton_PlaySelected.setEnabled(True)
