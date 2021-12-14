@@ -2,6 +2,7 @@ import sys
 import os
 import platform
 import logging
+import time
 
 import pygame
 from PyQt5 import QtWidgets
@@ -95,6 +96,10 @@ class MyWindow(QtWidgets.QMainWindow):
         self.timer.stop()
         # self.timer.timeout.connect(self.showtimer)
         # self.timer.killTimer(self.timer_id)
+
+    def do_nothing(self):
+        print("Nothing")
+        time.sleep(0.150)
 
     def btn_choose_dir(self):
         QApplication.processEvents()
@@ -249,6 +254,7 @@ class MyWindow(QtWidgets.QMainWindow):
         # Playing the songs in the background
         self.running = True
         while self.running:
+            self.do_nothing()
             QApplication.processEvents()
             # logging.info("while loop single...")
             # checking if any event has been
