@@ -61,8 +61,7 @@ class MyWindow(QtWidgets.QMainWindow):
         self.ui.horizontalSlider.valueChanged.connect(self.slider_changed)
         self.is_not_playing = True
         self.ui.comboBox.currentTextChanged.connect(self.combobox_text_changed)
-        self.timer = QTimer()
-        self.timer.timeout.connect(self.showtimer)
+        self.timer = None
         self.song = None
         self.songLength = 0.0
         self.ui.horizontalSliderPos.setMaximum(100)
@@ -82,6 +81,17 @@ class MyWindow(QtWidgets.QMainWindow):
         # self.ui.lineEdit.setEnabled(False)
         self.ui.pushButton_Choose.clicked.connect(self.btn_choose_dir)
         self.dirname = ""
+
+    def new_timer(self):
+        self.timer = QTimer()
+        self.timer.start(TIMER_MSEC)
+        self.timer.timeout.connect(self.showtimer)
+
+    def del_timer(self):
+        # self.timer = QTimer()
+        self.timer.stop()
+        self.timer.timeout.connect(self.showtimer)
+        self.timer.killTimer(self.timer.timerId())
 
     def btn_choose_dir(self):
         QApplication.processEvents()
@@ -127,7 +137,8 @@ class MyWindow(QtWidgets.QMainWindow):
             lensong = self.songLength
             if (curpos/10.0)/lensong >= 98.0:
                 pygame.mixer.music.stop()
-                self.timer.stop()
+                self.del_timer()
+                # self.timer.stop()
                 self.ui.pushButton_PlaySelected.setEnabled(True)
                 self.ui.horizontalSliderPos.setValue(0)
                 self.ui.label_pos.setText("позиция: {:.2f}% из {:.2f} сек".format(0.0, lensong))
@@ -143,7 +154,8 @@ class MyWindow(QtWidgets.QMainWindow):
         self.song = MP3(self.playList[0])
         self.songLength = self.song.info.length
         self.ui.label_cursong.setText(os.path.basename(self.playList[0]))
-        self.timer.start(TIMER_MSEC)
+        self.new_timer()
+        # self.timer.start(TIMER_MSEC)
         # Removing the loaded song from our playlist list
         self.playList.pop(0)
 
@@ -163,7 +175,8 @@ class MyWindow(QtWidgets.QMainWindow):
                 # after the end of every song
                 if event.type == self.SONG_END:
                     logging.info("Song from list finished")
-                    self.timer.stop()
+                    self.del_timer()
+                    # self.timer.stop()
 
                     # Checking our playList
                     # that if any song exist or
@@ -177,7 +190,8 @@ class MyWindow(QtWidgets.QMainWindow):
                         self.songLength = self.song.info.length
                         self.ui.label_cursong.setText(os.path.basename(self.playList[0]))
                         pygame.mixer.music.play()
-                        self.timer.start(TIMER_MSEC)
+                        self.new_timer()
+                        # self.timer.start(TIMER_MSEC)
                         self.playList.pop(0)
 
                 # Checking whether the
@@ -191,7 +205,8 @@ class MyWindow(QtWidgets.QMainWindow):
                     self.ui.pushButton_PauseCont.setEnabled(False)
                     self.ui.label_cursong.setText("")
                     self.is_not_playing = True
-                    self.timer.stop()
+                    self.del_timer()
+                    # self.timer.stop()
                     self.ui.pushButton_Choose.setEnabled(True)
                     self.ui.horizontalSliderPos.setValue(0)
                     self.song = MP3(os.path.join(self.mus_path, self.ui.comboBox.currentText()))
@@ -210,7 +225,8 @@ class MyWindow(QtWidgets.QMainWindow):
         self.is_not_playing = False
         self.ui.pushButton_PauseCont.setEnabled(True)
         self.ui.pushButton_PauseCont.setText("пауза")
-        self.timer.start(TIMER_MSEC)
+        self.new_timer()
+        # self.timer.start(TIMER_MSEC)
         self.ui.pushButton_PlaySelected.setEnabled(False)
         self.song = MP3(os.path.join(self.mus_path, self.ui.comboBox.currentText()))
         self.songLength = self.song.info.length
@@ -259,7 +275,8 @@ class MyWindow(QtWidgets.QMainWindow):
         self.ui.pushButton_Choose.setEnabled(True)
         self.ui.label_cursong.setText("")
         self.is_not_playing = True
-        self.timer.stop()
+        self.del_timer()
+        # self.timer.stop()
         self.ui.horizontalSliderPos.setValue(0)
         self.ui.label_pos.setText("позиция: {:.2f}% из {:.2f} сек".format(0.0, self.songLength))
 
@@ -282,14 +299,16 @@ class MyWindow(QtWidgets.QMainWindow):
     def pause_continue(self):
         QApplication.processEvents()
         if not self.is_not_playing:
-            self.timer.stop()
+            self.del_timer()
+            # self.timer.stop()
             self.ui.pushButton_PauseCont.setText("продолжить")
             self.is_not_playing = True
             pygame.mixer.music.pause()
         else:
             self.ui.pushButton_PauseCont.setText("пауза")
             self.is_not_playing = False
-            self.timer.start(TIMER_MSEC)
+            self.new_timer()
+            # self.timer.start(TIMER_MSEC)
             pygame.mixer.music.unpause()
 
     def slider_changed(self, value):
