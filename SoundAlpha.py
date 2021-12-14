@@ -84,6 +84,7 @@ class MyWindow(QtWidgets.QMainWindow):
         self.dirname = ""
 
     def btn_choose_dir(self):
+        QApplication.processEvents()
         dlg = QFileDialog()
         dlg.setFileMode(QFileDialog.DirectoryOnly)
         dlg.setDirectory(self.mus_path)
@@ -120,6 +121,7 @@ class MyWindow(QtWidgets.QMainWindow):
             self.ui.comboBox.currentTextChanged.connect(self.combobox_text_changed)
 
     def showtimer(self):
+        QApplication.processEvents()
         if not self.is_not_playing:
             curpos = pygame.mixer.music.get_pos()
             lensong = self.songLength
@@ -135,6 +137,7 @@ class MyWindow(QtWidgets.QMainWindow):
                 self.ui.label_pos.setText("позиция: {:.2f}% из {:.2f} сек".format((curpos/10.0)/lensong, lensong))
 
     def start_playlist(self):
+        QApplication.processEvents()
         # Loading first audio file into our player
         pygame.mixer.music.load(self.playList[0])
         self.song = MP3(self.playList[0])
@@ -203,6 +206,7 @@ class MyWindow(QtWidgets.QMainWindow):
                     break
 
     def play_selected(self):
+        QApplication.processEvents()
         self.is_not_playing = False
         self.ui.pushButton_PauseCont.setEnabled(True)
         self.ui.pushButton_PauseCont.setText("пауза")
@@ -260,6 +264,7 @@ class MyWindow(QtWidgets.QMainWindow):
         self.ui.label_pos.setText("позиция: {:.2f}% из {:.2f} сек".format(0.0, self.songLength))
 
     def play_all(self):
+        QApplication.processEvents()
         for i in range(0, self.ui.comboBox.count()):
             self.file4play = os.path.join(self.mus_path, self.ui.comboBox.itemText(i))
             logging.info("i = {},  self.file4play = '{}'".format(i, self.file4play))
@@ -275,23 +280,26 @@ class MyWindow(QtWidgets.QMainWindow):
         self.start_playlist()
 
     def pause_continue(self):
+        QApplication.processEvents()
         if not self.is_not_playing:
-            self.ui.pushButton_PauseCont.setText("продолжить")
-            pygame.mixer.music.pause()
-            self.is_not_playing = True
             self.timer.stop()
+            self.ui.pushButton_PauseCont.setText("продолжить")
+            self.is_not_playing = True
+            pygame.mixer.music.pause()
         else:
             self.ui.pushButton_PauseCont.setText("пауза")
-            pygame.mixer.music.unpause()
             self.is_not_playing = False
             self.timer.start(TIMER_MSEC)
+            pygame.mixer.music.unpause()
 
     def slider_changed(self, value):
+        QApplication.processEvents()
         if not self.is_not_playing:
             pygame.mixer.music.set_volume(value/100)
             logging.info("value = {}".format(value))
 
     def combobox_text_changed(self, choose_str):
+        QApplication.processEvents()
         logging.info("choose_str = {}".format(choose_str))
         if not self.is_not_playing:
             pygame.mixer.music.stop()
@@ -305,6 +313,7 @@ class MyWindow(QtWidgets.QMainWindow):
         self.ui.label_pos.setText("позиция: {:.2f}% из {:.2f} сек".format(0.0, self.songLength))
 
     def stop_play(self):
+        QApplication.processEvents()
         self.ui.comboBox.setEnabled(True)
         self.ui.pushButton_PlaySelected.setEnabled(True)
         self.ui.pushButton_PlayAll.setEnabled(True)
@@ -320,6 +329,7 @@ class MyWindow(QtWidgets.QMainWindow):
 
     @staticmethod
     def exit_prg():
+        QApplication.processEvents()
         app.instance().quit()
         pygame.quit()
 
