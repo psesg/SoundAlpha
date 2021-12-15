@@ -11,8 +11,6 @@ from PyQt5.QtCore import Qt, QTimer
 from mutagen.mp3 import MP3
 from SoundForm import Ui_MainWindow
 
-
-
 # next line for UHD display scaling
 QApplication.setAttribute(Qt.AA_EnableHighDpiScaling, True)
 
