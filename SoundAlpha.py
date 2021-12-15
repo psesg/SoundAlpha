@@ -20,6 +20,7 @@ QApplication.setAttribute(Qt.AA_EnableHighDpiScaling, True)
 logging.basicConfig(stream=sys.stderr, level=logging.CRITICAL)  # DEBUG, CRITICAL
 
 TIMER_MSEC = 200
+TIME_SLEEP = 0.075
 
 
 class MyWindow(QtWidgets.QMainWindow):
@@ -89,7 +90,7 @@ class MyWindow(QtWidgets.QMainWindow):
 
     def do_nothing(self):
         logging.info("Nothing")
-        time.sleep(0.150)
+        time.sleep(TIME_SLEEP)
 
     def btn_choose_dir(self):
         QApplication.processEvents()
