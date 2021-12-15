@@ -3,7 +3,7 @@ import os
 import platform
 import logging
 import time
-
+os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'
 import pygame
 from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QFileDialog, QApplication
@@ -11,7 +11,7 @@ from PyQt5.QtCore import Qt, QTimer
 from mutagen.mp3 import MP3
 from SoundForm import Ui_MainWindow
 
-os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'
+
 
 # next line for UHD display scaling
 QApplication.setAttribute(Qt.AA_EnableHighDpiScaling, True)
@@ -19,7 +19,7 @@ QApplication.setAttribute(Qt.AA_EnableHighDpiScaling, True)
 # pyuic5 SoundForm.ui -o SoundForm.py
 # for Win:  pyinstaller SoundAlpha.py -F -w --icon pygame.ico --version-file file_version_info.txt
 
-logging.basicConfig(stream=sys.stderr, level=logging.DEBUG)  # DEBUG, CRITICAL
+logging.basicConfig(stream=sys.stderr, level=logging.CRITICAL)  # DEBUG, CRITICAL
 
 TIMER_MSEC = 200
 
