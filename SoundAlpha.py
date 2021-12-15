@@ -61,10 +61,8 @@ class MyWindow(QtWidgets.QMainWindow):
         self.ui.horizontalSlider.valueChanged.connect(self.slider_changed)
         self.is_playing = False
         self.ui.comboBox.currentTextChanged.connect(self.combobox_text_changed)
-        # self.timer = None
-        # self.timer_id = None
         self.timer = QTimer(self)  # QTimer()
-        self.timer.timeout.connect(self.showtimer)
+        self.timer.timeout.connect(self.show_timer)
         self.song = None
         self.songLength = 0.0
         self.ui.horizontalSliderPos.setMaximum(100)
@@ -86,19 +84,13 @@ class MyWindow(QtWidgets.QMainWindow):
         self.dirname = ""
 
     def new_timer(self):
-        # self.timer = QTimer(self) # QTimer()
-        # self.connect(self.timer, QtCore.SIGNAL('timeout()'), self.showtimer())
-        # self.timer.timeout.connect(self.showtimer)
         self.timer.start(TIMER_MSEC)
 
     def del_timer(self):
-        # self.timer = QTimer()
         self.timer.stop()
-        # self.timer.timeout.connect(self.showtimer)
-        # self.timer.killTimer(self.timer_id)
 
     def do_nothing(self):
-        print("Nothing")
+        logging.info("Nothing")
         time.sleep(0.150)
 
     def btn_choose_dir(self):
@@ -138,7 +130,7 @@ class MyWindow(QtWidgets.QMainWindow):
                 self.ui.pushButton_PlayAll.setEnabled(False)
             self.ui.comboBox.currentTextChanged.connect(self.combobox_text_changed)
 
-    def showtimer(self):
+    def show_timer(self):
         QApplication.processEvents()
         if self.is_playing:
             curpos = pygame.mixer.music.get_pos()
@@ -146,8 +138,6 @@ class MyWindow(QtWidgets.QMainWindow):
             if (curpos / 10.0) / lensong >= 98.0:
                 pygame.mixer.music.stop()
                 self.del_timer()
-                # self.timer.stop()
-                # self.ui.pushButton_PlaySelected.setEnabled(True)
                 self.ui.horizontalSliderPos.setValue(0)
                 self.ui.label_pos.setText("позиция: {:.2f}% из {:.2f} сек".format(0.0, lensong))
                 self.ui.comboBox.setEnabled(True)
@@ -163,7 +153,6 @@ class MyWindow(QtWidgets.QMainWindow):
         self.songLength = self.song.info.length
         self.ui.label_cursong.setText(os.path.basename(self.playList[0]))
         self.new_timer()
-        # self.timer.start(TIMER_MSEC)
         # Removing the loaded song from our playlist list
         self.playList.pop(0)
 
@@ -185,7 +174,6 @@ class MyWindow(QtWidgets.QMainWindow):
                 if event.type == self.SONG_END:
                     logging.info("Song from list finished")
                     self.del_timer()
-                    # self.timer.stop()
 
                     # Checking our playList
                     # that if any song exist or
@@ -193,20 +181,18 @@ class MyWindow(QtWidgets.QMainWindow):
                     if len(self.playList) > 0:
                         # if song available then load it in player
                         # and remove from the player
-                        # pygame.mixer.music.queue(self.playList[0])
                         pygame.mixer.music.load(self.playList[0])
                         self.song = MP3(self.playList[0])
                         self.songLength = self.song.info.length
                         self.ui.label_cursong.setText(os.path.basename(self.playList[0]))
                         pygame.mixer.music.play()
                         self.new_timer()
-                        # self.timer.start(TIMER_MSEC)
                         self.playList.pop(0)
 
                 # Checking whether the
                 # player is still playing any song
                 # if yes it will return true and false otherwise
-                if not pygame.mixer.music.get_busy():
+                if not pygame.mixer.music.get_busy() and self.is_playing:
                     logging.info("Playlist completed")
                     self.ui.pushButton_PlayAll.setEnabled(True)
                     self.ui.pushButton_PlaySelected.setEnabled(True)
@@ -216,7 +202,6 @@ class MyWindow(QtWidgets.QMainWindow):
                     self.ui.label_cursong.setText("")
                     self.is_playing = False
                     self.del_timer()
-                    # self.timer.stop()
                     self.ui.pushButton_Choose.setEnabled(True)
                     self.ui.horizontalSliderPos.setValue(0)
                     self.song = MP3(os.path.join(self.mus_path, self.ui.comboBox.currentText()))
@@ -237,7 +222,6 @@ class MyWindow(QtWidgets.QMainWindow):
         self.ui.pushButton_PauseCont.setEnabled(True)
         self.ui.pushButton_PauseCont.setText("пауза")
         self.new_timer()
-        # self.timer.start(TIMER_MSEC)
         self.ui.pushButton_PlaySelected.setEnabled(False)
         self.song = MP3(os.path.join(self.mus_path, self.ui.comboBox.currentText()))
         self.songLength = self.song.info.length
@@ -246,7 +230,6 @@ class MyWindow(QtWidgets.QMainWindow):
         pygame.mixer.music.load(os.path.join(self.mus_path, self.ui.comboBox.currentText()))
         self.ui.label_cursong.setText(self.ui.comboBox.currentText())
         pygame.mixer.music.play(loops=0)  # -1
-        # pygame.mixer.music.unpause()
         self.ui.pushButton_PlayAll.setEnabled(False)
         self.ui.pushButton_Stop.setEnabled(True)
         self.ui.pushButton_Exit.setEnabled(False)
@@ -269,7 +252,7 @@ class MyWindow(QtWidgets.QMainWindow):
                 # Checking whether the
                 # player is still playing any song
                 # if yes it will return true and false otherwise
-                if not pygame.mixer.music.get_busy():
+                if not pygame.mixer.music.get_busy() and self.is_playing:
                     logging.info("Single Playlist completed")
 
                     # When the playlist has
@@ -289,7 +272,6 @@ class MyWindow(QtWidgets.QMainWindow):
         self.ui.label_cursong.setText("")
         self.is_playing = False
         self.del_timer()
-        # self.timer.stop()
         self.ui.horizontalSliderPos.setValue(0)
         self.ui.label_pos.setText("позиция: {:.2f}% из {:.2f} сек".format(0.0, self.songLength))
 
