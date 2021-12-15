@@ -64,10 +64,14 @@ class MyWindow(QtWidgets.QMainWindow):
         self.timer.timeout.connect(self.show_timer)
         self.song = None
         self.songLength = 0.0
-        self.ui.horizontalSliderPos.setMaximum(100)
-        self.ui.horizontalSliderPos.setMinimum(0)
-        self.ui.horizontalSliderPos.setSingleStep(1)
-        self.ui.horizontalSliderPos.setEnabled(False)
+        self.ui.progressBarCurSong.setMaximum(100)
+        self.ui.progressBarCurSong.setMinimum(0)
+        self.ui.progressBarCurSong.setEnabled(False)
+        self.ui.progressBarCurSong.setValue(0)
+        self.ui.progressBarTotalSongs.setMaximum(1)
+        self.ui.progressBarTotalSongs.setMinimum(0)
+        self.ui.progressBarTotalSongs.setEnabled(False)
+        self.ui.progressBarTotalSongs.setValue(0)
         self.running = False
         self.playList = []
         self.running = False
@@ -137,11 +141,11 @@ class MyWindow(QtWidgets.QMainWindow):
             if (curpos / 10.0) / lensong >= 98.0:
                 pygame.mixer.music.stop()
                 self.del_timer()
-                self.ui.horizontalSliderPos.setValue(0)
+                self.ui.progressBarCurSong.setValue(0)
                 self.ui.label_pos.setText("позиция: {:.2f}% из {:.2f} сек".format(0.0, lensong))
                 self.ui.comboBox.setEnabled(True)
             else:
-                self.ui.horizontalSliderPos.setValue(int((curpos / 10.0) / lensong))
+                self.ui.progressBarCurSong.setValue(int((curpos / 10.0) / lensong))
                 self.ui.label_pos.setText("позиция: {:.2f}% из {:.2f} сек".format((curpos / 10.0) / lensong, lensong))
 
     def start_playlist(self):
@@ -151,6 +155,9 @@ class MyWindow(QtWidgets.QMainWindow):
         self.song = MP3(self.playList[0])
         self.songLength = self.song.info.length
         self.ui.label_cursong.setText(os.path.basename(self.playList[0]))
+        self.ui.progressBarTotalSongs.setMaximum(len(self.playList))
+        self.ui.progressBarTotalSongs.setValue(len(self.playList))
+        self.ui.label_pos_songs.setText("песен: {} из {}".format(len(self.playList), len(self.playList)))
         self.new_timer()
         # Removing the loaded song from our playlist list
         self.playList.pop(0)
@@ -184,6 +191,9 @@ class MyWindow(QtWidgets.QMainWindow):
                         self.song = MP3(self.playList[0])
                         self.songLength = self.song.info.length
                         self.ui.label_cursong.setText(os.path.basename(self.playList[0]))
+                        self.ui.progressBarTotalSongs.setValue(len(self.playList))
+                        self.ui.label_pos_songs.setText(
+                            "песен: {} из {}".format(len(self.playList), self.ui.progressBarTotalSongs.maximum()))
                         pygame.mixer.music.play()
                         self.new_timer()
                         self.playList.pop(0)
@@ -202,11 +212,13 @@ class MyWindow(QtWidgets.QMainWindow):
                     self.is_playing = False
                     self.del_timer()
                     self.ui.pushButton_Choose.setEnabled(True)
-                    self.ui.horizontalSliderPos.setValue(0)
+                    self.ui.progressBarCurSong.setValue(0)
                     self.song = MP3(os.path.join(self.mus_path, self.ui.comboBox.currentText()))
                     self.songLength = self.song.info.length
                     self.ui.label_pos.setText("позиция: {:.2f}% из {:.2f} сек".format(0.0, self.songLength))
-
+                    self.ui.progressBarTotalSongs.setMaximum(1)
+                    self.ui.progressBarTotalSongs.setValue(0)
+                    self.ui.label_pos_songs.setText("песен: {} из {}".format(0, 0))
                     # When the playlist has
                     # completed playing successfully
                     # we'll go out of the
@@ -232,6 +244,9 @@ class MyWindow(QtWidgets.QMainWindow):
         self.ui.pushButton_PlayAll.setEnabled(False)
         self.ui.pushButton_Stop.setEnabled(True)
         self.ui.pushButton_Exit.setEnabled(False)
+        self.ui.progressBarTotalSongs.setMaximum(1)
+        self.ui.progressBarTotalSongs.setValue(1)
+        self.ui.label_pos_songs.setText("песен: {} из {}".format(1, 1))
 
         # Playing the songs in the background
         self.running = True
@@ -271,8 +286,10 @@ class MyWindow(QtWidgets.QMainWindow):
         self.ui.label_cursong.setText("")
         self.is_playing = False
         self.del_timer()
-        self.ui.horizontalSliderPos.setValue(0)
+        self.ui.progressBarCurSong.setValue(0)
         self.ui.label_pos.setText("позиция: {:.2f}% из {:.2f} сек".format(0.0, self.songLength))
+        self.ui.progressBarTotalSongs.setValue(0)
+        self.ui.label_pos_songs.setText("песен: {} из {}".format(0, 0))
 
     def play_all(self):
         QApplication.processEvents()
@@ -328,7 +345,7 @@ class MyWindow(QtWidgets.QMainWindow):
         self.ui.pushButton_PauseCont.setText("пауза")
         self.ui.pushButton_PauseCont.setEnabled(False)
         self.ui.pushButton_PlaySelected.setEnabled(True)
-        self.ui.horizontalSliderPos.setValue(0)
+        self.ui.progressBarCurSong.setValue(0)
         self.song = MP3(os.path.join(self.mus_path, self.ui.comboBox.currentText()))
         self.songLength = self.song.info.length
         self.ui.label_pos.setText("позиция: {:.2f}% из {:.2f} сек".format(0.0, self.songLength))
@@ -340,7 +357,7 @@ class MyWindow(QtWidgets.QMainWindow):
         self.ui.pushButton_PlayAll.setEnabled(True)
         self.ui.pushButton_PauseCont.setEnabled(False)
         self.ui.pushButton_Exit.setEnabled(True)
-        self.ui.horizontalSliderPos.setValue(0)
+        self.ui.progressBarCurSong.setValue(0)
         self.song = MP3(os.path.join(self.mus_path, self.ui.comboBox.currentText()))
         self.songLength = self.song.info.length
         self.ui.label_pos.setText("позиция: {:.2f}% из {:.2f} сек".format(0.0, self.songLength))
