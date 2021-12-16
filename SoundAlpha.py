@@ -145,10 +145,12 @@ class MyWindow(QtWidgets.QMainWindow):
                 pygame.mixer.music.stop()
                 self.del_timer()
                 self.ui.progressBarCurSong.setValue(0)
+                self.ui.progressBarCurSong.update()
                 self.ui.label_pos.setText("позиция: {:.2f}% из {:.2f} сек".format(0.0, lensong))
                 self.ui.comboBox.setEnabled(True)
             else:
                 self.ui.progressBarCurSong.setValue(int((curpos / 10.0) / lensong))
+                self.ui.progressBarCurSong.update()
                 self.ui.label_pos.setText("позиция: {:.2f}% из {:.2f} сек".format((curpos / 10.0) / lensong, lensong))
 
     def start_playlist(self):
@@ -206,6 +208,7 @@ class MyWindow(QtWidgets.QMainWindow):
                         self.songLength = self.song.info.length
                         self.ui.label_cursong.setText(os.path.basename(self.playList[0]))
                         self.ui.progressBarTotalSongs.setValue(len(self.playList))
+                        self.ui.progressBarTotalSongs.update()
                         self.current_list_duration_sec = self.total_list_duration_sec - self.songLength
                         rhours = int(self.current_list_duration_sec // 3060)
                         rminuts = int((self.current_list_duration_sec % 3060) // 60)
