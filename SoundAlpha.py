@@ -342,11 +342,13 @@ class MyWindow(QtWidgets.QMainWindow):
         if self.is_playing:
             self.is_playing = False
             self.ui.pushButton_PauseCont.setText("продолжить")
+            self.ui.pushButton_Stop.setEnabled(False)
             self.del_timer()
             pygame.mixer.music.pause()
         else:
             self.is_playing = True
             self.ui.pushButton_PauseCont.setText("пауза")
+            self.ui.pushButton_Stop.setEnabled(True)
             self.new_timer()
             pygame.mixer.music.unpause()
         #######################################################
