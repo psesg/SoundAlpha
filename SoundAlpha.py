@@ -85,6 +85,8 @@ class MyWindow(QtWidgets.QMainWindow):
         # self.ui.lineEdit.setEnabled(False)
         self.ui.pushButton_Choose.clicked.connect(self.btn_choose_dir)
         self.dirname = ""
+        self.total_list_duration_sec = 0.0
+        self.current_list_duration_sec = 0.0
 
     def new_timer(self):
         self.timer.start(TIMER_MSEC)
@@ -118,6 +120,7 @@ class MyWindow(QtWidgets.QMainWindow):
             if self.ui.comboBox.count() > 0:
                 self.ui.comboBox.clear()
                 logging.info("executed self.ui.comboBox.clear()")
+            self.total_list_duration_sec = 0
             for self.file in os.listdir(self.mus_path):
                 if self.file.endswith(".mp3"):
                     self.ui.comboBox.addItem(self.file)
@@ -157,7 +160,18 @@ class MyWindow(QtWidgets.QMainWindow):
         self.ui.label_cursong.setText(os.path.basename(self.playList[0]))
         self.ui.progressBarTotalSongs.setMaximum(len(self.playList))
         self.ui.progressBarTotalSongs.setValue(len(self.playList))
-        self.ui.label_pos_songs.setText("песен: {} из {}".format(len(self.playList), len(self.playList)))
+        self.total_list_duration_sec = 0.0
+        self.current_list_duration_sec = 0.0
+        for i in range(len(self.playList)):
+            self.song = MP3(self.playList[i])
+            self.songLength = self.song.info.length
+            self.total_list_duration_sec = self.total_list_duration_sec + self.songLength
+        self.current_list_duration_sec = self.total_list_duration_sec
+        hours = int(self.total_list_duration_sec // 3060)
+        minuts = int((self.total_list_duration_sec % 3060) // 60)
+        secunds = int((self.total_list_duration_sec % 3060) % 60)
+        self.ui.label_pos_songs.setText("{} [{:02d}:{:02d}:{:02d}] из {} [{:02d}:{:02d}:{:02d}]".format(len(self.playList),hours, minuts, secunds, len(self.playList),
+                                                                          hours, minuts, secunds))
         self.new_timer()
         # Removing the loaded song from our playlist list
         self.playList.pop(0)
@@ -192,8 +206,19 @@ class MyWindow(QtWidgets.QMainWindow):
                         self.songLength = self.song.info.length
                         self.ui.label_cursong.setText(os.path.basename(self.playList[0]))
                         self.ui.progressBarTotalSongs.setValue(len(self.playList))
+                        self.current_list_duration_sec = self.total_list_duration_sec - self.songLength
+                        rhours = int(self.current_list_duration_sec // 3060)
+                        rminuts = int((self.current_list_duration_sec % 3060) // 60)
+                        rsecunds = int((self.current_list_duration_sec % 3060) % 60)
+
+                        hours = int(self.total_list_duration_sec // 3060)
+                        minuts = int((self.total_list_duration_sec % 3060) // 60)
+                        secunds = int((self.total_list_duration_sec % 3060) % 60)
                         self.ui.label_pos_songs.setText(
-                            "песен: {} из {}".format(len(self.playList), self.ui.progressBarTotalSongs.maximum()))
+                            "{} [{:02d}:{:02d}:{:02d}] из {} [{:02d}:{:02d}:{:02d}]".format(len(self.playList), rhours,
+                                                                                              rminuts, rsecunds,
+                                                                                              self.ui.progressBarTotalSongs.maximum(),
+                                                                                              hours, minuts, secunds))
                         pygame.mixer.music.play()
                         self.new_timer()
                         self.playList.pop(0)
