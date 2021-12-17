@@ -3,6 +3,7 @@ import os
 import platform
 import logging
 import time
+
 os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'
 import pygame
 from PyQt5 import QtWidgets
@@ -80,6 +81,7 @@ class MyWindow(QtWidgets.QMainWindow):
         # setting up an end event which host an event
         # after the end of every song
         self.SONG_END = pygame.USEREVENT + 1
+        self.NEED_NEXT_SONG = pygame.USEREVENT + 2
         pygame.mixer.music.set_endevent(self.SONG_END)
         self.ui.pushButton_Stop.setEnabled(False)
         # self.ui.lineEdit.setEnabled(False)
@@ -87,6 +89,12 @@ class MyWindow(QtWidgets.QMainWindow):
         self.dirname = ""
         self.total_list_duration_sec = 0.0
         self.current_list_duration_sec = 0.0
+        self.ui.pushButton_NextSong.clicked.connect(self.need_next_song)
+        self.ui.pushButton_NextSong.setEnabled(False)
+        self.is_need_nex_song = False
+
+    def need_next_song(self):
+        self.is_need_nex_song = True
 
     def new_timer(self):
         self.timer.start(TIMER_MSEC)
@@ -156,6 +164,7 @@ class MyWindow(QtWidgets.QMainWindow):
     def start_playlist(self):
         QApplication.processEvents()
         # Loading first audio file into our player
+        self.ui.pushButton_NextSong.setEnabled(True)
         pygame.mixer.music.load(self.playList[0])
         self.song = MP3(self.playList[0])
         self.songLength = self.song.info.length
@@ -172,8 +181,10 @@ class MyWindow(QtWidgets.QMainWindow):
         hours = int(self.total_list_duration_sec // 3060)
         minuts = int((self.total_list_duration_sec % 3060) // 60)
         secunds = int((self.total_list_duration_sec % 3060) % 60)
-        self.ui.label_pos_songs.setText("{} [{:02d}:{:02d}:{:02d}] из {} [{:02d}:{:02d}:{:02d}]".format(len(self.playList),hours, minuts, secunds, len(self.playList),
-                                                                          hours, minuts, secunds))
+        self.ui.label_pos_songs.setText(
+            "{} [{:02d}:{:02d}:{:02d}] из {} [{:02d}:{:02d}:{:02d}]".format(len(self.playList), hours, minuts, secunds,
+                                                                            len(self.playList),
+                                                                            hours, minuts, secunds))
         self.new_timer()
         # Removing the loaded song from our playlist list
         self.playList.pop(0)
@@ -186,11 +197,16 @@ class MyWindow(QtWidgets.QMainWindow):
         self.running = True
         while self.running:
             QApplication.processEvents()
+            if self.is_need_nex_song:
+                self.is_need_nex_song = False
+                pygame.time.set_timer(self.SONG_END, 55, 1)  # delay 55 msec
+                logging.info("is_need_nex_song")
+                if len(self.playList) <=1:
+                    self.ui.pushButton_NextSong.setEnabled(False)
             # logging.info("while loop list...")
             # checking if any event has been
             # hosted at time of playing
             for event in pygame.event.get():
-
                 # A event will be hosted
                 # after the end of every song
                 if event.type == self.SONG_END:
@@ -219,9 +235,9 @@ class MyWindow(QtWidgets.QMainWindow):
                         secunds = int((self.total_list_duration_sec % 3060) % 60)
                         self.ui.label_pos_songs.setText(
                             "{} [{:02d}:{:02d}:{:02d}] из {} [{:02d}:{:02d}:{:02d}]".format(len(self.playList), rhours,
-                                                                                              rminuts, rsecunds,
-                                                                                              self.ui.progressBarTotalSongs.maximum(),
-                                                                                              hours, minuts, secunds))
+                                                                                            rminuts, rsecunds,
+                                                                                            self.ui.progressBarTotalSongs.maximum(),
+                                                                                            hours, minuts, secunds))
                         pygame.mixer.music.play()
                         self.new_timer()
                         self.playList.pop(0)
@@ -247,6 +263,7 @@ class MyWindow(QtWidgets.QMainWindow):
                     self.ui.progressBarTotalSongs.setMaximum(1)
                     self.ui.progressBarTotalSongs.setValue(0)
                     self.ui.label_pos_songs.setText("песен: {} из {}".format(0, 0))
+                    self.ui.pushButton_NextSong.setEnabled(False)
                     # When the playlist has
                     # completed playing successfully
                     # we'll go out of the
